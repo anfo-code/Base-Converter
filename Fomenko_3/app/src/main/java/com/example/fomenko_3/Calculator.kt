@@ -87,13 +87,13 @@ fun calculateTheNumber() {
         val splitNumber = tenthNum.toString().split(".")
         numBeforeDot = splitNumber[0]
         numAfterDot = splitNumber[1]
-        result = transferNumToEndSystem(numBeforeDot.toInt(), numAfterDot.toInt())
+        result = transferNumToEndSystem(numBeforeDot.toInt(), ("0.$numAfterDot").toDouble())
     } else {
         result = transferNumToEndSystem(tenthNum.toInt(), null)
     }
 
     if (isNegative) {
-     result = "-$result"
+        result = "-$result"
     }
     println(result)
 }
@@ -116,31 +116,35 @@ fun transferNumToTenthSystem(charsToDot: Int): Double {
     return tenthNumber
 }
 
-fun transferNumToEndSystem(numBeforeDot: Int, numAfterDot: Int?): String {
-    var intNum = numBeforeDot
+fun transferNumToEndSystem(numBeforeDot: Int, numAfterDot: Double?): String {
+    var integerNumber = numBeforeDot
     var fractionalNum = numAfterDot
     val stringBuilder = StringBuilder()
     var result = ""
     while (true) {
-        if (intNum < endBase) {
-            stringBuilder.append(intNum % endBase)
+        if (integerNumber < endBase) {
+            stringBuilder.append(integerNumber % endBase)
             result = stringBuilder.reverse().toString()
             break
         } else {
-            stringBuilder.append(intNum % endBase)
-            intNum /= endBase
+            stringBuilder.append(integerNumber % endBase)
+            integerNumber /= endBase
         }
     }
     if (fractionalNum != null) {
         stringBuilder.clear()
+        var numbersAfterDotCount = 0
         while (true) {
-            if (fractionalNum !== 0) {
+            if (numbersAfterDotCount == 8) {
+                result += ".$stringBuilder"
+                break
+            } else if (fractionalNum !== 0.0) {
                 fractionalNum *= endBase
                 var roundedToWhole = fractionalNum.toInt()
                 stringBuilder.append(roundedToWhole)
                 fractionalNum -= roundedToWhole
+                numbersAfterDotCount ++
             } else {
-                stringBuilder.append(intNum % endBase)
                 result += ".$stringBuilder"
                 break
             }
